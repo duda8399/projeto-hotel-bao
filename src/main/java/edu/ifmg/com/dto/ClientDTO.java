@@ -12,14 +12,17 @@ public class ClientDTO extends RepresentationModel<ClientDTO> {
 
     @Schema(description = "Nome do cliente")
     @Size(min = 3, max = 255, message = "Deve ter entre 3 e 255 caracteres.")
+    @NotBlank(message = "O nome do cliente é obrigatório")
     private String name;
 
     @Schema(description = "E-mail do cliente de acesso ao sistema")
     @Email(message = "Favor informar um e-mail válido")
+    @NotBlank(message = "O e-mail é obrigatório")
     private String email;
 
     @Schema(description = "Senha do cliente de acesso ao sistema")
     @NotBlank(message = "A senha é obrigatória")
+    @Size(min = 6, max = 10, message = "Deve ter entre 6 e 10 caracteres.")
     private String password;
 
     @Schema(description = "Número de celular do cliente")
