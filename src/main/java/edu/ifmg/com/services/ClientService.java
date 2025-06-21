@@ -4,6 +4,8 @@ import edu.ifmg.com.entities.Client;
 import edu.ifmg.com.repositories.ClientRepository;
 import edu.ifmg.com.services.exceptions.DatabaseException;
 import edu.ifmg.com.services.exceptions.ResourceNotFound;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -12,13 +14,21 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.bind.annotation.GetMapping;
 
 @Service
 public class ClientService {
     @Autowired
     private ClientRepository clientRepository;
 
-    @Transactional(readOnly = true)
+    @GetMapping(produces = "application/json")
+    @Operation(
+            description = "Obtenha todos os clientes",
+            summary = "Listar todos os clientes cadastrados",
+            responses = {
+                    @ApiResponse(description = "ok", responseCode = "200"),
+            }
+    )
     public Page<ClientDTO> findAll(Pageable pageable) {
         Page<Client> list = clientRepository.findAll(pageable);
         return list.map(ClientDTO::new);
