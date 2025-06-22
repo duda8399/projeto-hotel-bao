@@ -42,6 +42,7 @@ public class ClientResource {
 
     @PostMapping
     public ResponseEntity<ClientDTO> insert(@RequestBody ClientDTO clientDTO) {
+        clientDTO.setPassword(clientDTO.getPhone());
         ClientDTO newClient = clientService.insert(clientDTO);
         URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequest()

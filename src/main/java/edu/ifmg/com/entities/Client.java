@@ -1,5 +1,6 @@
 package edu.ifmg.com.entities;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
@@ -18,6 +19,9 @@ public class Client implements Serializable {
     private String email;
     private String password;
     private String phone;
+
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
     @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
     private Instant createdAt;
@@ -40,6 +44,7 @@ public class Client implements Serializable {
         this.email = client.getEmail();
         this.password = client.getPassword();
         this.phone = client.getPhone();
+        this.role = client.getRole();
         this.createdAt = client.getCreatedAt();
         this.updatedAt = client.getUpdatedAt();
     }
@@ -82,6 +87,14 @@ public class Client implements Serializable {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     public Instant getCreatedAt() {

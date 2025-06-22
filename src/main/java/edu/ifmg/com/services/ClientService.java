@@ -1,14 +1,17 @@
 package edu.ifmg.com.services;
 import edu.ifmg.com.dto.ClientDTO;
 import edu.ifmg.com.entities.Client;
+import edu.ifmg.com.entities.Role;
 import edu.ifmg.com.repositories.ClientRepository;
 import edu.ifmg.com.services.exceptions.DatabaseException;
 import edu.ifmg.com.services.exceptions.ResourceNotFound;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.persistence.EntityNotFoundException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,10 +19,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 
+@Slf4j
 @Service
 public class ClientService {
     @Autowired
     private ClientRepository clientRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @GetMapping(produces = "application/json")
     @Operation(
@@ -43,11 +50,14 @@ public class ClientService {
 
     @Transactional
     public ClientDTO insert(ClientDTO dto) {
+
+        log.info("insert {}", passwordEncoder.encode(dto.getPassword()));
         Client entity = new Client();
         entity.setName(dto.getName());
         entity.setEmail(dto.getEmail());
-        entity.setPassword(dto.getPassword());
+        entity.setPassword(passwordEncoder.encode(dto.getPassword()));
         entity.setPhone(dto.getPhone());
+        entity.setRole(Role.CLIENT);
         entity = clientRepository.save(entity);
         return new ClientDTO(entity);
     }
@@ -58,7 +68,7 @@ public class ClientService {
             Client entity = clientRepository.getReferenceById(id);
             entity.setName(dto.getName());
             entity.setEmail(dto.getEmail());
-            entity.setPassword(dto.getPassword());
+            entity.setPassword(passwordEncoder.encode(dto.getPassword()));
             entity.setPhone(dto.getPhone());
             entity = clientRepository.save(entity);
             return new ClientDTO(entity);

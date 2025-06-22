@@ -15,8 +15,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class ReservationService {
@@ -46,14 +47,22 @@ public class ReservationService {
 
     @Transactional
     public ReservationDTO insert(ReservationDTO dto) {
-        Instant checkInDate = dto.getCheckInDate();
-        Instant checkOutDate = checkInDate.plus(24, ChronoUnit.HOURS);
+
+        /*boolean exists = reservationRepository.existsByAccommodationIdAndDateRange(
+                dto.getAccommodation().getId(),
+                dto.getCheckInDate(),
+                dto.getCheckOutDate()
+        );
+
+        if (exists) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Já existe uma reserva nesse período");
+        }*/
 
         Reservation reservation = new Reservation(
                 dto.getClient(),
                 dto.getAccommodation(),
                 dto.getCheckInDate(),
-                checkOutDate
+                dto.getCheckOutDate()
         );
         reservation = reservationRepository.save(reservation);
         return new ReservationDTO(reservation);
@@ -61,15 +70,12 @@ public class ReservationService {
 
     @Transactional
     public ReservationDTO update(Long id, ReservationDTO dto) {
-        Instant checkInDate = dto.getCheckInDate();
-        Instant checkOutDate = checkInDate.plus(24, ChronoUnit.HOURS);
-
         try {
             Reservation reservation = reservationRepository.getReferenceById(id);
             reservation.setClient(dto.getClient());
             reservation.setAccommodation(dto.getAccommodation());
             reservation.setCheckInDate(dto.getCheckInDate());
-            reservation.setCheckOutDate(checkOutDate);
+            reservation.setCheckOutDate(dto.getCheckOutDate());
             return new ReservationDTO(reservationRepository.save(reservation));
         } catch (EntityNotFoundException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Reserva não encontrada");
