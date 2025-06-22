@@ -1,51 +1,39 @@
 package edu.ifmg.com.dto;
 
 import edu.ifmg.com.entities.Accommodation;
-import edu.ifmg.com.entities.Bedroom;
-import edu.ifmg.com.entities.Client;
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import org.springframework.hateoas.RepresentationModel;
-
-import java.time.Instant;
 import java.util.Objects;
 
 public class AccommodationDTO extends RepresentationModel<AccommodationDTO> {
-
-    @Schema(description = "ID da acomodação gerado pelo banco de dados")
+    @Schema(description = "ID do quarto gerado pelo banco de dados")
     private long id;
 
-    @Schema(description = "Cliente associado à acomodação")
-    @NotNull(message = "O cliente é obrigatório")
-    private Client client;
+    @Schema(description = "Descrição do quarto")
+    private String description;
 
-    @Schema(description = "Quarto associado à acomodação")
-    @NotNull(message = "O quarto é obrigatório")
-    private Bedroom bedroom;
+    @Schema(description = "Valor do quarto")
+    @NotBlank(message = "O valor é obrigatório")
+    private double value;
 
-    @Schema(description = "Data de check-in do cliente")
-    @NotNull(message = "A data de check-in é obrigatória")
-    private Instant checkInDate;
-
-    @Schema(description = "Data de check-out do cliente")
-    @NotNull(message = "A data de check-out é obrigatória")
-    private Instant checkOutDate;
+    @Schema(description = "Imagem do quarto")
+    private String imageUrl;
 
     public AccommodationDTO() {}
 
-    public AccommodationDTO(Client client, Bedroom bedroom, Instant checkInDate, Instant checkOutDate) {
-        this.client = client;
-        this.bedroom = bedroom;
-        this.checkInDate = checkInDate;
-        this.checkOutDate = checkOutDate;
+    public AccommodationDTO(long id, String description, double value, String imageUrl) {
+        this.id = id;
+        this.description = description;
+        this.value = value;
+        this.imageUrl = imageUrl;
     }
 
-    public AccommodationDTO(Accommodation accommodation) {
-        this.id = accommodation.getId();
-        this.client = accommodation.getClient();
-        this.bedroom = accommodation.getBedroom();
-        this.checkInDate = accommodation.getCheckInDate();
-        this.checkOutDate = accommodation.getCheckOutDate();
+    public AccommodationDTO(Accommodation bedroom) {
+        this.id = bedroom.getId();
+        this.description = bedroom.getDescription();
+        this.value = bedroom.getValue();
+        this.imageUrl = bedroom.getImageUrl();
     }
 
     public long getId() {
@@ -56,42 +44,34 @@ public class AccommodationDTO extends RepresentationModel<AccommodationDTO> {
         this.id = id;
     }
 
-    public Client getClient() {
-        return client;
+    public String getDescription() {
+        return description;
     }
 
-    public void setClient(Client client) {
-        this.client = client;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public Bedroom getBedroom() {
-        return bedroom;
+    public double getValue() {
+        return value;
     }
 
-    public void setBedroom(Bedroom bedroom) {
-        this.bedroom = bedroom;
+    public void setValue(double value) {
+        this.value = value;
     }
 
-    public Instant getCheckInDate() {
-        return checkInDate;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
-    public void setCheckInDate(Instant checkInDate) {
-        this.checkInDate = checkInDate;
-    }
-
-    public Instant getCheckOutDate() {
-        return checkOutDate;
-    }
-
-    public void setCheckOutDate(Instant checkOutDate) {
-        this.checkOutDate = checkOutDate;
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (!(o instanceof AccommodationDTO other)) return false;
-        return id == other.id;
+        if (!(o instanceof AccommodationDTO bedroom)) return false;
+        return id == bedroom.id;
     }
 
     @Override
@@ -103,10 +83,9 @@ public class AccommodationDTO extends RepresentationModel<AccommodationDTO> {
     public String toString() {
         return "AccommodationDTO{" +
                 "id=" + id +
-                ", client=" + client +
-                ", bedroom=" + bedroom +
-                ", checkInDate=" + checkInDate +
-                ", checkOutDate=" + checkOutDate +
+                ", description='" + description + '\'' +
+                ", value='" + value + '\'' +
+                ", imageUrl=" + imageUrl +
                 '}';
     }
 }

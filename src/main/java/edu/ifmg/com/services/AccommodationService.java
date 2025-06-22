@@ -1,66 +1,79 @@
 package edu.ifmg.com.services;
-
 import edu.ifmg.com.dto.AccommodationDTO;
 import edu.ifmg.com.entities.Accommodation;
 import edu.ifmg.com.repositories.AccommodationRepository;
+import edu.ifmg.com.services.exceptions.DatabaseException;
+import edu.ifmg.com.services.exceptions.ResourceNotFound;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
-import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.GetMapping;
 
 @Service
 public class AccommodationService {
-
     @Autowired
     private AccommodationRepository accommodationRepository;
 
-    @Transactional(readOnly = true)
+    @GetMapping(produces = "application/json")
+    @Operation(
+            description = "Obtenha todas as acomodações",
+            summary = "Listar todas as acomodações cadastradas",
+            responses = {
+                    @ApiResponse(description = "ok", responseCode = "200"),
+            }
+    )
     public Page<AccommodationDTO> findAll(Pageable pageable) {
-        Page<Accommodation> page = accommodationRepository.findAll(pageable);
-        return page.map(AccommodationDTO::new);
+        Page<Accommodation> list = accommodationRepository.findAll(pageable);
+        return list.map(AccommodationDTO::new);
     }
 
     @Transactional(readOnly = true)
     public AccommodationDTO findById(Long id) {
         Accommodation accommodation = accommodationRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Acomodação não encontrada"));
+                .orElseThrow(() -> new ResourceNotFound("Acomodação não encontrada"));
         return new AccommodationDTO(accommodation);
     }
 
     @Transactional
     public AccommodationDTO insert(AccommodationDTO dto) {
-        Accommodation accommodation = new Accommodation(
-                dto.getClient(),
-                dto.getBedroom(),
-                dto.getCheckInDate(),
-                dto.getCheckOutDate()
-        );
-        accommodation = accommodationRepository.save(accommodation);
-        return new AccommodationDTO(accommodation);
+        Accommodation entity = new Accommodation();
+        entity.setDescription(dto.getDescription());
+        entity.setValue(dto.getValue());
+        entity.setImageUrl(dto.getImageUrl());
+        entity = accommodationRepository.save(entity);
+        return new AccommodationDTO(entity);
     }
 
     @Transactional
     public AccommodationDTO update(Long id, AccommodationDTO dto) {
         try {
-            Accommodation accommodation = accommodationRepository.getReferenceById(id);
-            accommodation.setClient(dto.getClient());
-            accommodation.setBedroom(dto.getBedroom());
-            accommodation.setCheckInDate(dto.getCheckInDate());
-            accommodation.setCheckOutDate(dto.getCheckOutDate());
-            return new AccommodationDTO(accommodationRepository.save(accommodation));
+            Accommodation entity = accommodationRepository.getReferenceById(id);
+            entity.setDescription(dto.getDescription());
+            entity.setValue(dto.getValue());
+            entity.setImageUrl(dto.getImageUrl());
+            entity = accommodationRepository.save(entity);
+            return new AccommodationDTO(entity);
         } catch (EntityNotFoundException e) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Acomodação não encontrada");
+            throw new ResourceNotFound("Acomodação não encontrada: " + id);
         }
     }
 
+    @Transactional(propagation = Propagation.SUPPORTS)
     public void delete(Long id) {
         if (!accommodationRepository.existsById(id)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Acomodação não encontrada");
+            throw new ResourceNotFound("Acomodação não encontrada - ID: " + id);
         }
-        accommodationRepository.deleteById(id);
+        try {
+            accommodationRepository.deleteById(id);
+        } catch (DataIntegrityViolationException e) {
+            throw new DatabaseException("Integridade violada");
+        }
     }
 }

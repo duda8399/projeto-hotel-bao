@@ -1,6 +1,7 @@
 package edu.ifmg.com.entities;
 
 import jakarta.persistence.*;
+
 import java.io.Serializable;
 import java.time.Instant;
 
@@ -12,70 +13,64 @@ public class Accommodation implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "client_id", nullable = false)
-    private Client client;
-
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "bedroom_id", nullable = false)
-    private Bedroom bedroom;
-
-    @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
-    private Instant checkInDate;
-
-    @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
-    private Instant checkOutDate;
+    @Column(columnDefinition = "TEXT")
+    private String description;
+    private double value;
+    private String imageUrl;
 
     @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
     private Instant createdAt;
-
     @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
     private Instant updatedAt;
 
     public Accommodation() {}
 
-    public Accommodation(Client client, Bedroom bedroom, Instant checkInDate, Instant checkOutDate) {
-        this.client = client;
-        this.bedroom = bedroom;
-        this.checkInDate = checkInDate;
-        this.checkOutDate = checkOutDate;
+    public Accommodation(long id, String description, double value, String imageUrl) {
+        this.id = id;
+        this.description = description;
+        this.value = value;
+        this.imageUrl = imageUrl;
+    }
+
+    public Accommodation(Accommodation bedroom) {
+        this.id = bedroom.getId();
+        this.description = bedroom.getDescription();
+        this.value = bedroom.getValue();
+        this.imageUrl = bedroom.getImageUrl();
+        this.createdAt = bedroom.getCreatedAt();
+        this.updatedAt = bedroom.getUpdatedAt();
     }
 
     public long getId() {
         return id;
     }
 
-    public Client getClient() {
-        return client;
+    public void setId(long id) {
+        this.id = id;
     }
 
-    public void setClient(Client client) {
-        this.client = client;
+    public String getDescription() {
+        return description;
     }
 
-    public Bedroom getBedroom() {
-        return bedroom;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public void setBedroom(Bedroom bedroom) {
-        this.bedroom = bedroom;
+    public double getValue() {
+        return value;
     }
 
-    public Instant getCheckInDate() {
-        return checkInDate;
+    public void setValue(double value) {
+        this.value = value;
     }
 
-    public void setCheckInDate(Instant checkInDate) {
-        this.checkInDate = checkInDate;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
-    public Instant getCheckOutDate() {
-        return checkOutDate;
-    }
-
-    public void setCheckOutDate(Instant checkOutDate) {
-        this.checkOutDate = checkOutDate;
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public Instant getCreatedAt() {
