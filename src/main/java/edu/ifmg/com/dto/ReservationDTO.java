@@ -23,29 +23,26 @@ public class ReservationDTO extends RepresentationModel<ReservationDTO> {
     @NotNull(message = "A acomodação é obrigatória")
     private Accommodation accommodation;
 
-    @Schema(description = "Data de check-in do cliente")
+    @Schema(description = "Data de check-in da estadia")
     @NotNull(message = "A data de check-in é obrigatória")
     private Instant checkInDate;
 
-    @Schema(description = "Data de check-out do cliente")
-    @NotNull(message = "A data de check-out é obrigatória")
+    @Schema(description = "Data de check-out da estadia")
     private Instant checkOutDate;
 
     public ReservationDTO() {}
 
-    public ReservationDTO(Client client, Accommodation bedroom, Instant checkInDate, Instant checkOutDate) {
+    public ReservationDTO(Client client, Accommodation accommodation, Instant checkInDate) {
         this.client = client;
-        this.accommodation = bedroom;
+        this.accommodation = accommodation;
         this.checkInDate = checkInDate;
-        this.checkOutDate = checkOutDate;
     }
 
     public ReservationDTO(Reservation accommodation) {
         this.id = accommodation.getId();
         this.client = accommodation.getClient();
-        this.accommodation = accommodation.getBedroom();
+        this.accommodation = accommodation.getAccommodation();
         this.checkInDate = accommodation.getCheckInDate();
-        this.checkOutDate = accommodation.getCheckOutDate();
     }
 
     public long getId() {
@@ -64,12 +61,12 @@ public class ReservationDTO extends RepresentationModel<ReservationDTO> {
         this.client = client;
     }
 
-    public Accommodation getBedroom() {
+    public Accommodation getAccommodation() {
         return accommodation;
     }
 
-    public void setBedroom(Accommodation bedroom) {
-        this.accommodation = bedroom;
+    public void setAccommodation(Accommodation accommodation) {
+        this.accommodation = accommodation;
     }
 
     public Instant getCheckInDate() {

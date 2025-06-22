@@ -19,7 +19,7 @@ import java.net.URI;
 public class AccommodationResource {
 
     @Autowired
-    private AccommodationService bedroomService;
+    private AccommodationService accommodationService;
 
     @GetMapping
     public ResponseEntity<Page<AccommodationDTO>> findAll(
@@ -30,36 +30,36 @@ public class AccommodationResource {
     ) {
         Pageable pageable = PageRequest.of(page, size, Sort.Direction.valueOf(direction), orderBy);
 
-        Page<AccommodationDTO> rooms = bedroomService.findAll(pageable);
-        return ResponseEntity.ok().body(rooms);
+        Page<AccommodationDTO> accommodations = accommodationService.findAll(pageable);
+        return ResponseEntity.ok().body(accommodations);
     }
 
     @GetMapping(value = "/{id}")
     public ResponseEntity<AccommodationDTO> findById(@PathVariable Long id) {
-        AccommodationDTO bedroom = bedroomService.findById(id);
-        return ResponseEntity.ok().body(bedroom);
+        AccommodationDTO accommodation = accommodationService.findById(id);
+        return ResponseEntity.ok().body(accommodation);
     }
 
     @PostMapping
-    public ResponseEntity<AccommodationDTO> insert(@RequestBody AccommodationDTO bedroomDTO) {
-        AccommodationDTO newBedroom = bedroomService.insert(bedroomDTO);
+    public ResponseEntity<AccommodationDTO> insert(@RequestBody AccommodationDTO dto) {
+        AccommodationDTO newAccommodation = accommodationService.insert(dto);
         URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(newBedroom.getId())
+                .buildAndExpand(newAccommodation.getId())
                 .toUri();
-        return ResponseEntity.created(uri).body(newBedroom);
+        return ResponseEntity.created(uri).body(newAccommodation);
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<AccommodationDTO> update(@PathVariable Long id, @RequestBody AccommodationDTO bedroomDTO) {
-        AccommodationDTO updatedBedroom = bedroomService.update(id, bedroomDTO);
-        return ResponseEntity.ok().body(updatedBedroom);
+    public ResponseEntity<AccommodationDTO> update(@PathVariable Long id, @RequestBody AccommodationDTO dto) {
+        AccommodationDTO updatedAccommodation = accommodationService.update(id, dto);
+        return ResponseEntity.ok().body(updatedAccommodation);
     }
 
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
-        bedroomService.delete(id);
+        accommodationService.delete(id);
         return ResponseEntity.noContent().build();
     }
 }

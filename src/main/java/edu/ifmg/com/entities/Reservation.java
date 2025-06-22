@@ -54,12 +54,12 @@ public class Reservation implements Serializable {
         this.client = client;
     }
 
-    public Accommodation getBedroom() {
+    public Accommodation getAccommodation() {
         return accommodation;
     }
 
-    public void setBedroom(Accommodation bedroom) {
-        this.accommodation = bedroom;
+    public void setAccommodation(Accommodation accommodation) {
+        this.accommodation = accommodation;
     }
 
     public Instant getCheckInDate() {
