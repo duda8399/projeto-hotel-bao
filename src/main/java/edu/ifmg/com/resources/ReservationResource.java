@@ -65,4 +65,5 @@ public class ReservationResource {
         reservationService.delete(id);
         return ResponseEntity.noContent().build();
     }
+
 }

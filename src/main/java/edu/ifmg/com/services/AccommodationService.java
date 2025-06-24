@@ -1,6 +1,7 @@
 package edu.ifmg.com.services;
 import edu.ifmg.com.dto.AccommodationDTO;
 import edu.ifmg.com.entities.Accommodation;
+import edu.ifmg.com.entities.Client;
 import edu.ifmg.com.repositories.AccommodationRepository;
 import edu.ifmg.com.services.exceptions.DatabaseException;
 import edu.ifmg.com.services.exceptions.ResourceNotFound;
@@ -15,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import java.util.List;
 
 @Service
 public class AccommodationService {
@@ -75,5 +78,14 @@ public class AccommodationService {
         } catch (DataIntegrityViolationException e) {
             throw new DatabaseException("Integridade violada");
         }
+    }
+
+    public List<String> accommodationList() {
+        List<Accommodation> accommodations = accommodationRepository.findAll();
+
+        return accommodations.stream()
+                .map(c -> String.format("Quarto: - Código: %d  - Descrição: %s - Valor: R$%s",
+                        c.getId(), c.getDescription(), c.getValue()))
+                .toList();
     }
 }

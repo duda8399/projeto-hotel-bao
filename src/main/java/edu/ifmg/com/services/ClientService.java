@@ -19,6 +19,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.List;
+
 @Slf4j
 @Service
 public class ClientService {
@@ -89,5 +91,14 @@ public class ClientService {
         } catch (DataIntegrityViolationException e) {
             throw new DatabaseException("Integridade violada");
         }
+    }
+
+    public List<String> customerList() {
+        List<Client> clients = clientRepository.findAll();
+
+        return clients.stream()
+                .map(c -> String.format("Cliente - Código: %d  - Nome: %s - Celular: %s",
+                        c.getId(), c.getName(), c.getPhone()))
+                .toList();
     }
 }
