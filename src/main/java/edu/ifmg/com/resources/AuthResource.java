@@ -13,7 +13,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,8 +35,6 @@ public class AuthResource {
 
     @Autowired
     private ClientService clientService;
-    @Autowired
-    private BCryptPasswordEncoder passwordEncoder;
 
     @PostMapping("/register")
     public ResponseEntity<ClientDTO> register(@RequestBody ClientDTO dto) {
@@ -52,8 +49,6 @@ public class AuthResource {
 
     @PostMapping("/login")
     public LoginResponseDTO login(@RequestBody LoginRequestDTO loginRequest) {
-        log.info("Tentativa de login para o e-mail: {} e senha: {}", loginRequest.getEmail(), passwordEncoder.encode(loginRequest.getPassword()));
-
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -72,17 +67,4 @@ public class AuthResource {
             throw e;
         }
     }
-
-    /*@PostMapping("/auth/reset-password")
-public ResponseEntity<?> resetPassword(@RequestParam String email) {
-    User user = userRepository.findByEmail(email);
-    if (user == null) throw new RuntimeException("Usuário não encontrado");
-
-    String newPassword = UUID.randomUUID().toString().substring(0, 8);
-    user.setPassword(passwordEncoder.encode(newPassword));
-    userRepository.save(user);
-
-    // Envie por e-mail ou apenas retorne (temporário)
-    return ResponseEntity.ok("Nova senha: " + newPassword);
-}*/
 }

@@ -4,6 +4,7 @@ import edu.ifmg.com.dto.AccommodationDTO;
 import edu.ifmg.com.services.AccommodationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -41,6 +42,7 @@ public class AccommodationResource {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<AccommodationDTO> insert(@RequestBody AccommodationDTO dto) {
         AccommodationDTO newAccommodation = accommodationService.insert(dto);
         URI uri = ServletUriComponentsBuilder
@@ -52,12 +54,14 @@ public class AccommodationResource {
     }
 
     @PutMapping(value = "/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<AccommodationDTO> update(@PathVariable Long id, @RequestBody AccommodationDTO dto) {
         AccommodationDTO updatedAccommodation = accommodationService.update(id, dto);
         return ResponseEntity.ok().body(updatedAccommodation);
     }
 
     @DeleteMapping(value = "/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         accommodationService.delete(id);
         return ResponseEntity.noContent().build();

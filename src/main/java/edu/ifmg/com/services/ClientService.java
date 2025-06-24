@@ -50,8 +50,6 @@ public class ClientService {
 
     @Transactional
     public ClientDTO insert(ClientDTO dto) {
-
-        log.info("insert {}", passwordEncoder.encode(dto.getPassword()));
         Client entity = new Client();
         entity.setName(dto.getName());
         entity.setEmail(dto.getEmail());
@@ -68,7 +66,11 @@ public class ClientService {
             Client entity = clientRepository.getReferenceById(id);
             entity.setName(dto.getName());
             entity.setEmail(dto.getEmail());
-            entity.setPassword(passwordEncoder.encode(dto.getPassword()));
+
+            if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
+                entity.setPassword(passwordEncoder.encode(dto.getPassword()));
+            }
+
             entity.setPhone(dto.getPhone());
             entity = clientRepository.save(entity);
             return new ClientDTO(entity);

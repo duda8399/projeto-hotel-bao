@@ -4,6 +4,7 @@ import edu.ifmg.com.dto.ClientDTO;
 import edu.ifmg.com.services.ClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -22,6 +23,7 @@ public class ClientResource {
     private ClientService clientService;
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Page<ClientDTO>> findAll(
             @RequestParam(value = "page", defaultValue = "0") Integer page,
             @RequestParam(value = "size", defaultValue = "10") Integer size,
@@ -35,12 +37,14 @@ public class ClientResource {
     }
 
     @GetMapping(value = "/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ClientDTO> findById(@PathVariable Long id) {
         ClientDTO client = clientService.findById(id);
         return ResponseEntity.ok().body(client);
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ClientDTO> insert(@RequestBody ClientDTO clientDTO) {
         clientDTO.setPassword(clientDTO.getPhone());
         ClientDTO newClient = clientService.insert(clientDTO);
@@ -53,12 +57,14 @@ public class ClientResource {
     }
 
     @PutMapping(value = "/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ClientDTO> update(@PathVariable Long id, @RequestBody ClientDTO clientDTO) {
         ClientDTO updatedClient = clientService.update(id, clientDTO);
         return ResponseEntity.ok().body(updatedClient);
     }
 
     @DeleteMapping(value = "/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         clientService.delete(id);
         return ResponseEntity.noContent().build();

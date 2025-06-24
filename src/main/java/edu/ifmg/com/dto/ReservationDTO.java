@@ -1,8 +1,6 @@
 package edu.ifmg.com.dto;
 
 import edu.ifmg.com.entities.Reservation;
-import edu.ifmg.com.entities.Accommodation;
-import edu.ifmg.com.entities.Client;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.hateoas.RepresentationModel;
@@ -15,13 +13,13 @@ public class ReservationDTO extends RepresentationModel<ReservationDTO> {
     @Schema(description = "ID da reserva gerado pelo banco de dados")
     private long id;
 
-    @Schema(description = "Cliente associado à reserva")
-    @NotNull(message = "O cliente é obrigatório")
-    private Client client;
+    @Schema(description = "ID do cliente associado à reserva")
+    @NotNull(message = "O ID do cliente é obrigatório")
+    private Long clientId;
 
-    @Schema(description = "Acomodação associada à reserva")
-    @NotNull(message = "A acomodação é obrigatória")
-    private Accommodation accommodation;
+    @Schema(description = "ID da acomodação associada à reserva")
+    @NotNull(message = "O ID da acomodação é obrigatório")
+    private Long accommodationId;
 
     @Schema(description = "Data de check-in da estadia")
     @NotNull(message = "A data de check-in é obrigatória")
@@ -32,17 +30,12 @@ public class ReservationDTO extends RepresentationModel<ReservationDTO> {
 
     public ReservationDTO() {}
 
-    public ReservationDTO(Client client, Accommodation accommodation, Instant checkInDate) {
-        this.client = client;
-        this.accommodation = accommodation;
-        this.checkInDate = checkInDate;
-    }
-
-    public ReservationDTO(Reservation accommodation) {
-        this.id = accommodation.getId();
-        this.client = accommodation.getClient();
-        this.accommodation = accommodation.getAccommodation();
-        this.checkInDate = accommodation.getCheckInDate();
+    public ReservationDTO(Reservation reservation) {
+        this.id = reservation.getId();
+        this.clientId = reservation.getClient().getId();
+        this.accommodationId = reservation.getAccommodation().getId();
+        this.checkInDate = reservation.getCheckInDate();
+        this.checkOutDate = reservation.getCheckOutDate();
     }
 
     public long getId() {
@@ -53,20 +46,20 @@ public class ReservationDTO extends RepresentationModel<ReservationDTO> {
         this.id = id;
     }
 
-    public Client getClient() {
-        return client;
+    public Long getClientId() {
+        return clientId;
     }
 
-    public void setClient(Client client) {
-        this.client = client;
+    public void setClientId(Long clientId) {
+        this.clientId = clientId;
     }
 
-    public Accommodation getAccommodation() {
-        return accommodation;
+    public Long getAccommodationId() {
+        return accommodationId;
     }
 
-    public void setAccommodation(Accommodation accommodation) {
-        this.accommodation = accommodation;
+    public void setAccommodationId(Long accommodationId) {
+        this.accommodationId = accommodationId;
     }
 
     public Instant getCheckInDate() {
@@ -100,8 +93,8 @@ public class ReservationDTO extends RepresentationModel<ReservationDTO> {
     public String toString() {
         return "ReservationDTO {" +
                 "id=" + id +
-                ", client=" + client +
-                ", accommodation=" + accommodation +
+                ", clientId=" + clientId +
+                ", accommodationId=" + accommodationId +
                 ", checkInDate=" + checkInDate +
                 ", checkOutDate=" + checkOutDate +
                 '}';

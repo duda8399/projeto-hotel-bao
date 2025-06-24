@@ -34,7 +34,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         // Público: usuários não autenticados
                         .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/accommodations/**").permitAll()
+                        .requestMatchers("/accommodation/**").permitAll()
 
                         .requestMatchers(
                                 "/v3/api-docs/**",
@@ -42,13 +42,6 @@ public class SecurityConfig {
                                 "/swagger-ui.html"
                         ).permitAll()
 
-                        // Administrativo
-                        .requestMatchers("/admin/**").hasRole("ADMIN")
-
-                        // Cliente autenticado
-                        .requestMatchers("/client/**").hasRole("CLIENT")
-
-                        // Qualquer outra requisição precisa estar autenticada
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
