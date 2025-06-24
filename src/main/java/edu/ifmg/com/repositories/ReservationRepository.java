@@ -14,12 +14,12 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
         SELECT CASE WHEN COUNT(r) > 0 THEN true ELSE false END
         FROM Reservation r
         WHERE r.accommodation.id = :accommodationId
-          AND r.checkInDate < :checkOut
-          AND r.checkOutDate > :checkIn
+          AND r.checkInDate < :checkOutDate
+          AND r.checkOutDate > :checkInDate
     """)
     boolean existsByAccommodationIdAndDateRange(
             @Param("accommodationId") Long accommodationId,
-            @Param("checkIn") Instant checkIn,
-            @Param("checkOut") Instant checkOut
+            @Param("checkInDate") Instant checkInDate,
+            @Param("checkOutDate") Instant checkOutDate
     );
 }

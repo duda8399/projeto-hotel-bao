@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
+
 @Service
 public class ReservationService {
 
@@ -52,7 +53,6 @@ public class ReservationService {
 
     @Transactional
     public ReservationDTO insert(ReservationDTO dto) {
-
         boolean exists = reservationRepository.existsByAccommodationIdAndDateRange(
                 dto.getAccommodationId(),
                 dto.getCheckInDate(),
@@ -83,6 +83,16 @@ public class ReservationService {
     @Transactional
     public ReservationDTO update(Long id, ReservationDTO dto) {
         try {
+            boolean exists = reservationRepository.existsByAccommodationIdAndDateRange(
+                    dto.getAccommodationId(),
+                    dto.getCheckInDate(),
+                    dto.getCheckOutDate()
+            );
+
+            if (exists) {
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "Já existe uma reserva nesse período");
+            }
+
             Reservation reservation = reservationRepository.getReferenceById(id);
 
             Client client = clientRepository.findById(dto.getClientId())
