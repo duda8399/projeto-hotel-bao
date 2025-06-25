@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -199,4 +200,18 @@ public class ReservationService {
         List<Reservation> reservations = reservationRepository.findTopByClientIdOrderByAccommodationValueDesc(clientId);
         return reservations.isEmpty() ? Optional.empty() : Optional.of(reservations.get(0));
     }
+
+    public Optional<Reservation> getReservationWithLowerAccommodationValue(Long clientId) {
+        List<Reservation> reservations = reservationRepository.findTopByClientIdOrderByAccommodationValueAsc(clientId);
+        return reservations.isEmpty() ? Optional.empty() : Optional.of(reservations.get(0));
+    }
+
+    public Double getTotalReservationValueByClient(Long clientId) {
+        List<Reservation> reservations = reservationRepository.findByClientId(clientId);
+
+        return reservations.stream()
+                .mapToDouble(r -> r.getAccommodation().getValue())
+                .sum();
+    }
+
 }

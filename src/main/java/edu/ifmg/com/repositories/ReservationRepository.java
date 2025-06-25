@@ -28,4 +28,7 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
 
     @Query("SELECT r FROM Reservation r WHERE r.client.id = :clientId ORDER BY r.accommodation.value DESC")
     List<Reservation> findTopByClientIdOrderByAccommodationValueDesc(@Param("clientId") Long clientId);
+
+    @Query("SELECT r FROM Reservation r WHERE r.client.id = :clientId ORDER BY r.accommodation.value ASC")
+    List<Reservation> findTopByClientIdOrderByAccommodationValueAsc(@Param("clientId") Long clientId);
 }

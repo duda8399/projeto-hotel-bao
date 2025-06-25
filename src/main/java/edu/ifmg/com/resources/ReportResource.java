@@ -100,4 +100,30 @@ public class ReportResource {
             return ResponseEntity.ok("Não existem reservas cadastradas para este cliente.");
         }
     }
+
+    @GetMapping("/lowerValue/{clientId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CLIENT')")
+    public ResponseEntity<String> getReservationWithLowerAccommodationValue(@PathVariable Long clientId) {
+        Optional<Reservation> optionalReservation = reservationService.getReservationWithLowerAccommodationValue(clientId);
+
+        if (optionalReservation.isPresent()) {
+            Reservation r = optionalReservation.get();
+            String response = String.format(
+                    "RELATÓRIO - ESTADIA DE MENOR VALOR: %s Valor: R$ %.2f",
+                    r.getAccommodation().getDescription(), r.getAccommodation().getValue()
+            );
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.ok("Não existem reservas cadastradas para este cliente.");
+        }
+    }
+
+    @GetMapping("/totalValue/{clientId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'CLIENT')")
+    public ResponseEntity<String> getTotalReservationValueByClient(@PathVariable Long clientId) {
+        Double total = reservationService.getTotalReservationValueByClient(clientId);
+        String response = String.format("RELATÓRIO - O TOTAL DAS ESTADIAS DO CLIENTE É: R$ %.2f", total);
+
+        return ResponseEntity.ok(response);
+    }
 }
