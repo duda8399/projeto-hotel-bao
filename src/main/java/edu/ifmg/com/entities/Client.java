@@ -18,6 +18,8 @@ public class Client implements Serializable {
     private String email;
     private String password;
     private String phone;
+    private String address;
+    private String city;
 
     @Enumerated(EnumType.STRING)
     private Role role;
@@ -29,12 +31,14 @@ public class Client implements Serializable {
 
     public Client() {}
 
-    public Client(long id, String name, String email, String password, String phone) {
+    public Client(long id, String name, String email, String password, String phone, String address, String city) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
         this.phone = phone;
+        this.address = address;
+        this.city = city;
     }
 
     public Client(Client client) {
@@ -43,6 +47,8 @@ public class Client implements Serializable {
         this.email = client.getEmail();
         this.password = client.getPassword();
         this.phone = client.getPhone();
+        this.address = client.getAddress();
+        this.city = client.getCity();
         this.role = client.getRole();
         this.createdAt = client.getCreatedAt();
         this.updatedAt = client.getUpdatedAt();
@@ -86,6 +92,22 @@ public class Client implements Serializable {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
     }
 
     public Role getRole() {

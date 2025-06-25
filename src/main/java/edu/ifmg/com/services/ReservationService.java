@@ -1,5 +1,6 @@
 package edu.ifmg.com.services;
 
+import ch.qos.logback.core.util.StringUtil;
 import edu.ifmg.com.dto.ReservationDTO;
 import edu.ifmg.com.entities.Accommodation;
 import edu.ifmg.com.entities.Client;
@@ -19,7 +20,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ReservationService {
@@ -119,5 +124,79 @@ public class ReservationService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Reserva não encontrada");
         }
         reservationRepository.deleteById(id);
+    }
+
+    public List<String> reservationList() {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        ZoneId zoneId = ZoneId.systemDefault();
+
+        List<Reservation> reservations = reservationRepository.findAll();
+
+        return reservations.stream()
+                .map(c -> {
+                    LocalDateTime checkInDate = LocalDateTime.ofInstant(c.getCheckInDate(), zoneId);
+                    return String.format("Estadia: - Código: %d  - Cliente: %s - Quarto: %s - Data: %s",
+                            c.getId(),
+                            c.getClient().getName(),
+                            c.getAccommodation().getDescription(),
+                            checkInDate.format(formatter));
+                })
+                .toList();
+    }
+
+    public String generateInvoice(Long clientId) {
+        Client client = clientRepository.findById(clientId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Cliente não encontrado"));
+
+        if (isNullOrEmpty(client.getName()) ||
+                isNullOrEmpty(client.getAddress()) ||
+                isNullOrEmpty(client.getCity())) {
+            throw new IllegalArgumentException("Todos os dados do cliente devem ser preenchidos.");
+        }
+
+        List<Reservation> reservations = reservationRepository.findByClientId(clientId);
+
+        List<Reservation> validReservations = reservations.stream()
+                .filter(r -> r.getAccommodation() != null &&
+                        r.getAccommodation().getDescription() != null &&
+                        !r.getAccommodation().getDescription().isBlank() &&
+                        r.getAccommodation().getValue() != 0)
+                .toList();
+
+        if (validReservations.isEmpty()) {
+            throw new IllegalArgumentException("Deve haver pelo menos uma estadia com descrição e valor informados.");
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("===============================\n");
+        sb.append("         NOTA FISCAL\n");
+        sb.append("===============================\n");
+        sb.append("Nome: ").append(client.getName()).append("\n");
+        sb.append("Endereço: ").append(client.getAddress()).append("\n");
+        sb.append("Cidade: ").append(client.getCity()).append("\n");
+        sb.append("===============================\n");
+        sb.append("        ==== ESTADIAS ====\n");
+
+        double total = 0.0;
+        for (Reservation reservation : validReservations) {
+            sb.append("Quarto: ").append(reservation.getAccommodation().getDescription());
+            sb.append("    Valor: ").append(String.format("%.2f", reservation.getAccommodation().getValue())).append("\n");
+            total += reservation.getAccommodation().getValue();
+        }
+
+        sb.append("===============================\n");
+        sb.append("Total: R$ ").append(String.format("%.2f", total)).append("\n");
+        sb.append("===============================");
+
+        return sb.toString();
+    }
+
+    private boolean isNullOrEmpty(String s) {
+        return s == null || s.isBlank();
+    }
+
+    public Optional<Reservation> getReservationWithHighestAccommodationValue(Long clientId) {
+        List<Reservation> reservations = reservationRepository.findTopByClientIdOrderByAccommodationValueDesc(clientId);
+        return reservations.isEmpty() ? Optional.empty() : Optional.of(reservations.get(0));
     }
 }

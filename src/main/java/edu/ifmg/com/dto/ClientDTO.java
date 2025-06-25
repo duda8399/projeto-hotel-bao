@@ -27,13 +27,21 @@ public class ClientDTO extends RepresentationModel<ClientDTO> {
     @Schema(description = "Número de celular do cliente")
     private String phone;
 
+    @Schema(description = "Endereço do cliente")
+    private String address;
+
+    @Schema(description = "Cidade do cliente")
+    private String city;
+
     public ClientDTO() {}
 
-    public ClientDTO(String name, String email, String password, String phone) {
+    public ClientDTO(String name, String email, String password, String phone, String address, String city) {
         this.name = name;
         this.email = email;
         this.password = password;
         this.phone = phone;
+        this.address = address;
+        this.city = city;
     }
 
     public ClientDTO(Client client) {
@@ -42,6 +50,8 @@ public class ClientDTO extends RepresentationModel<ClientDTO> {
         this.email = client.getEmail();
         this.password = client.getPassword();
         this.phone = client.getPhone();
+        this.address = client.getAddress();
+        this.city = client.getCity();
     }
 
     public long getId() {
@@ -84,6 +94,22 @@ public class ClientDTO extends RepresentationModel<ClientDTO> {
         this.phone = phone;
     }
 
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof ClientDTO client)) return false;
@@ -103,6 +129,8 @@ public class ClientDTO extends RepresentationModel<ClientDTO> {
                 ", email='" + email + '\'' +
                 ", password=" + password +
                 ", phone=" + phone +
+                ", address=" + address +
+                ", city=" + city +
                 '}';
     }
 }

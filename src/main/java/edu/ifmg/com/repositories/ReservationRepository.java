@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.Instant;
+import java.util.List;
 
 @Repository
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
@@ -22,4 +23,9 @@ public interface ReservationRepository extends JpaRepository<Reservation, Long> 
             @Param("checkInDate") Instant checkInDate,
             @Param("checkOutDate") Instant checkOutDate
     );
+
+    List<Reservation> findByClientId(Long clientId);
+
+    @Query("SELECT r FROM Reservation r WHERE r.client.id = :clientId ORDER BY r.accommodation.value DESC")
+    List<Reservation> findTopByClientIdOrderByAccommodationValueDesc(@Param("clientId") Long clientId);
 }

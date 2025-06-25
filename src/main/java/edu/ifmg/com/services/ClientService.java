@@ -57,6 +57,8 @@ public class ClientService {
         entity.setEmail(dto.getEmail());
         entity.setPassword(passwordEncoder.encode(dto.getPassword()));
         entity.setPhone(dto.getPhone());
+        entity.setAddress(dto.getAddress());
+        entity.setCity(dto.getCity());
         entity.setRole(Role.CLIENT);
         entity = clientRepository.save(entity);
         return new ClientDTO(entity);
@@ -73,6 +75,8 @@ public class ClientService {
                 entity.setPassword(passwordEncoder.encode(dto.getPassword()));
             }
 
+            entity.setAddress(dto.getAddress());
+            entity.setCity(dto.getCity());
             entity.setPhone(dto.getPhone());
             entity = clientRepository.save(entity);
             return new ClientDTO(entity);
@@ -97,8 +101,17 @@ public class ClientService {
         List<Client> clients = clientRepository.findAll();
 
         return clients.stream()
-                .map(c -> String.format("Cliente - Código: %d  - Nome: %s - Celular: %s",
-                        c.getId(), c.getName(), c.getPhone()))
+                .map(c -> String.format(
+                        "Cliente - Código: %d  - Nome: %s - Endereço: %s - Celular: %s",
+                        c.getId(),
+                        safe(c.getName()),
+                        safe(c.getAddress()),
+                        safe(c.getPhone())
+                ))
                 .toList();
+    }
+
+    private String safe(String value) {
+        return value == null ? "N/A" : value;
     }
 }
