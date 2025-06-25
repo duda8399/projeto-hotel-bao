@@ -4,33 +4,36 @@ import edu.ifmg.com.entities.Client;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import org.springframework.hateoas.RepresentationModel;
+
 import java.util.Objects;
 
+@Schema(description = "DTO que representa os dados de um cliente do sistema.")
 public class ClientDTO extends RepresentationModel<ClientDTO> {
-    @Schema(description = "ID do cliente gerado pelo banco de dados")
+
+    @Schema(description = "ID do cliente gerado pelo banco de dados", example = "1", accessMode = Schema.AccessMode.READ_ONLY)
     private long id;
 
-    @Schema(description = "Nome do cliente")
+    @Schema(description = "Nome completo do cliente", example = "João da Silva")
     @Size(min = 3, max = 255, message = "Deve ter entre 3 e 255 caracteres.")
     @NotBlank(message = "O nome do cliente é obrigatório")
     private String name;
 
-    @Schema(description = "E-mail do cliente de acesso ao sistema")
+    @Schema(description = "E-mail do cliente utilizado para login", example = "joao.silva@example.com")
     @Email(message = "Favor informar um e-mail válido")
     @NotBlank(message = "O e-mail é obrigatório")
     private String email;
 
-    @Schema(description = "Senha do cliente de acesso ao sistema")
+    @Schema(description = "Senha de acesso do cliente (mínimo 6, máximo 10 caracteres)", example = "abc123")
     @Size(min = 6, max = 10, message = "Deve ter entre 6 e 10 caracteres.")
     private String password;
 
-    @Schema(description = "Número de celular do cliente")
+    @Schema(description = "Número de celular do cliente", example = "31999998888")
     private String phone;
 
-    @Schema(description = "Endereço do cliente")
+    @Schema(description = "Endereço residencial do cliente", example = "Rua das Flores, 123")
     private String address;
 
-    @Schema(description = "Cidade do cliente")
+    @Schema(description = "Cidade onde o cliente reside", example = "Belo Horizonte")
     private String city;
 
     public ClientDTO() {}
@@ -45,7 +48,6 @@ public class ClientDTO extends RepresentationModel<ClientDTO> {
     }
 
     public ClientDTO(Client client) {
-        this.id = client.getId();
         this.name = client.getName();
         this.email = client.getEmail();
         this.password = client.getPassword();

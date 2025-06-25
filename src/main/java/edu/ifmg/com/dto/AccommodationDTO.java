@@ -4,20 +4,24 @@ import edu.ifmg.com.entities.Accommodation;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import org.springframework.hateoas.RepresentationModel;
+
 import java.util.Objects;
 
+@Schema(description = "DTO que representa uma acomodação (quarto) disponível para reserva.")
 public class AccommodationDTO extends RepresentationModel<AccommodationDTO> {
-    @Schema(description = "ID do quarto gerado pelo banco de dados")
+
+    @Schema(description = "ID do quarto gerado pelo banco de dados", example = "1", accessMode = Schema.AccessMode.READ_ONLY)
     private long id;
 
-    @Schema(description = "Descrição do quarto")
+    @Schema(description = "Descrição do quarto", example = "Suíte com vista para o mar e ar-condicionado")
+    @NotBlank(message = "A descrição é obrigatória")
     private String description;
 
-    @Schema(description = "Valor do quarto")
-    @NotBlank(message = "O valor é obrigatório")
+    @Schema(description = "Valor da diária da acomodação (em reais)", example = "299.90", minimum = "0.0")
+    @Positive(message = "O valor deve ser maior que zero")
     private double value;
 
-    @Schema(description = "Imagem do quarto")
+    @Schema(description = "URL da imagem do quarto", example = "https://example.com/images/quarto1.jpg")
     private String imageUrl;
 
     public AccommodationDTO() {}
@@ -84,8 +88,8 @@ public class AccommodationDTO extends RepresentationModel<AccommodationDTO> {
         return "AccommodationDTO{" +
                 "id=" + id +
                 ", description='" + description + '\'' +
-                ", value='" + value + '\'' +
-                ", imageUrl=" + imageUrl +
+                ", value=" + value +
+                ", imageUrl='" + imageUrl + '\'' +
                 '}';
     }
 }

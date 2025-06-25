@@ -8,24 +8,25 @@ import org.springframework.hateoas.RepresentationModel;
 import java.time.Instant;
 import java.util.Objects;
 
+@Schema(description = "DTO que representa uma reserva feita por um cliente para uma acomodação.")
 public class ReservationDTO extends RepresentationModel<ReservationDTO> {
 
-    @Schema(description = "ID da reserva gerado pelo banco de dados")
+    @Schema(description = "ID da reserva gerado pelo banco de dados", example = "1001", accessMode = Schema.AccessMode.READ_ONLY)
     private long id;
 
-    @Schema(description = "ID do cliente associado à reserva")
+    @Schema(description = "ID do cliente associado à reserva", example = "1", required = true)
     @NotNull(message = "O ID do cliente é obrigatório")
     private Long clientId;
 
-    @Schema(description = "ID da acomodação associada à reserva")
+    @Schema(description = "ID da acomodação associada à reserva", example = "10", required = true)
     @NotNull(message = "O ID da acomodação é obrigatório")
     private Long accommodationId;
 
-    @Schema(description = "Data de check-in da estadia")
+    @Schema(description = "Data de check-in da estadia no formato ISO-8601", example = "2025-07-20T14:00:00Z", required = true)
     @NotNull(message = "A data de check-in é obrigatória")
     private Instant checkInDate;
 
-    @Schema(description = "Data de check-out da estadia")
+    @Schema(description = "Data de check-out da estadia no formato ISO-8601", example = "2025-07-25T11:00:00Z")
     private Instant checkOutDate;
 
     public ReservationDTO() {}

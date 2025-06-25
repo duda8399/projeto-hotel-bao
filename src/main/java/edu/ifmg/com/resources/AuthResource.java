@@ -5,6 +5,11 @@ import edu.ifmg.com.dto.LoginRequestDTO;
 import edu.ifmg.com.dto.LoginResponseDTO;
 import edu.ifmg.com.oauth.JwtService;
 import edu.ifmg.com.services.ClientService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +18,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
@@ -36,8 +39,21 @@ public class AuthResource {
     @Autowired
     private ClientService clientService;
 
+    @Operation(summary = "Registrar novo cliente", description = "Cria um novo cliente e retorna os dados cadastrados.",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "Cliente criado com sucesso",
+                            content = @Content(schema = @Schema(implementation = ClientDTO.class))),
+                    @ApiResponse(responseCode = "400", description = "Dados inválidos", content = @Content)
+            }
+    )
     @PostMapping("/register")
-    public ResponseEntity<ClientDTO> register(@RequestBody ClientDTO dto) {
+    public ResponseEntity<ClientDTO> register(
+            @Parameter(
+                    description = "Dados do novo cliente", required = true,
+                    content = @Content(schema = @Schema(implementation = ClientDTO.class))
+            )
+            @RequestBody ClientDTO dto) {
+
         ClientDTO newClient = clientService.insert(dto);
         URI uri = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -47,8 +63,22 @@ public class AuthResource {
         return ResponseEntity.created(uri).body(newClient);
     }
 
+    @Operation(summary = "Login", description = "Realiza login e retorna um token JWT.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "Login realizado com sucesso",
+                            content = @Content(schema = @Schema(implementation = LoginResponseDTO.class))),
+                    @ApiResponse(responseCode = "401", description = "Credenciais inválidas", content = @Content)
+            }
+    )
     @PostMapping("/login")
-    public LoginResponseDTO login(@RequestBody LoginRequestDTO loginRequest) {
+    public LoginResponseDTO login(
+            @Parameter(
+                    description = "Credenciais de login",
+                    required = true,
+                    content = @Content(schema = @Schema(implementation = LoginRequestDTO.class))
+            )
+            @RequestBody LoginRequestDTO loginRequest) {
+
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
