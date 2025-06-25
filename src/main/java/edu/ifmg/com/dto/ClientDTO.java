@@ -4,36 +4,33 @@ import edu.ifmg.com.entities.Client;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.*;
 import org.springframework.hateoas.RepresentationModel;
-
 import java.util.Objects;
 
-@Schema(description = "DTO que representa os dados de um cliente do sistema.")
 public class ClientDTO extends RepresentationModel<ClientDTO> {
-
-    @Schema(description = "ID do cliente gerado pelo banco de dados", example = "1", accessMode = Schema.AccessMode.READ_ONLY)
+    @Schema(description = "ID do cliente gerado pelo banco de dados")
     private long id;
 
-    @Schema(description = "Nome completo do cliente", example = "João da Silva")
+    @Schema(description = "Nome do cliente")
     @Size(min = 3, max = 255, message = "Deve ter entre 3 e 255 caracteres.")
     @NotBlank(message = "O nome do cliente é obrigatório")
     private String name;
 
-    @Schema(description = "E-mail do cliente utilizado para login", example = "joao.silva@example.com")
+    @Schema(description = "E-mail do cliente de acesso ao sistema")
     @Email(message = "Favor informar um e-mail válido")
     @NotBlank(message = "O e-mail é obrigatório")
     private String email;
 
-    @Schema(description = "Senha de acesso do cliente (mínimo 6, máximo 10 caracteres)", example = "abc123")
+    @Schema(description = "Senha do cliente de acesso ao sistema")
     @Size(min = 6, max = 10, message = "Deve ter entre 6 e 10 caracteres.")
     private String password;
 
-    @Schema(description = "Número de celular do cliente", example = "31999998888")
+    @Schema(description = "Número de celular do cliente")
     private String phone;
 
-    @Schema(description = "Endereço residencial do cliente", example = "Rua das Flores, 123")
+    @Schema(description = "Endereço do cliente")
     private String address;
 
-    @Schema(description = "Cidade onde o cliente reside", example = "Belo Horizonte")
+    @Schema(description = "Cidade do cliente")
     private String city;
 
     public ClientDTO() {}
