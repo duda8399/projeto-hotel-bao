@@ -45,6 +45,7 @@ public class ClientDTO extends RepresentationModel<ClientDTO> {
     }
 
     public ClientDTO(Client client) {
+        this.id = client.getId();
         this.name = client.getName();
         this.email = client.getEmail();
         this.password = client.getPassword();
